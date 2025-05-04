@@ -34,6 +34,12 @@ services:
     restart: unless-stopped
     ports:
       - "8989:80"
+      - "4433:443"
+    volumes:
+      # Mount SSL certificates from host
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      # Mount log files for easier debugging
+      - ./logs/nginx:/var/log/nginx
     networks:
       - moodshift-network
     healthcheck:
@@ -44,9 +50,10 @@ services:
       start_period: 5s
     labels:
       - "dokploy.enable=true"
-      - "dokploy.port=80"
+      - "dokploy.port=80,443"
       - "dokploy.public=true"
       - "dokploy.domain=moodshift.fuadfakhruz.id"
+      - "dokploy.protocol=https"
 
 networks:
   moodshift-network:
