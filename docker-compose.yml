@@ -5,7 +5,6 @@ services:
     build:
       context: ./backend-fiber
       dockerfile: Dockerfile
-    image: ${DOKPLOY_REGISTRY_URL}/moodshift-backend:${DOKPLOY_IMAGE_TAG:-latest}
     container_name: moodshift-backend
     restart: unless-stopped
     ports:
@@ -31,7 +30,6 @@ services:
     build:
       context: ./frontend-vite
       dockerfile: Dockerfile
-    image: ${DOKPLOY_REGISTRY_URL}/moodshift-frontend:${DOKPLOY_IMAGE_TAG:-latest}
     container_name: moodshift-frontend
     restart: unless-stopped
     ports:
