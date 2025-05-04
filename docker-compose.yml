@@ -23,7 +23,7 @@ services:
   frontend:
     build:
       context: ./frontend-vite
-      dockerfile: Dockerfile-simple
+      dockerfile: Dockerfile
     container_name: moodshift-frontend
     restart: unless-stopped
     ports:
