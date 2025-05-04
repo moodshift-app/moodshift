@@ -12,48 +12,32 @@ services:
     environment:
       - APP_ENV=${APP_ENV:-production}
       - PORT=8080
-      - CORS_ALLOW_ORIGINS=https://moodshift.fuadfakhruz.id
+      - CORS_ALLOW_ORIGINS=http://localhost:8080
       - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
       - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
-      - SPOTIFY_REDIRECT_URI=https://moodshift.fuadfakhruz.id/api/v1/auth/callback
+      - SPOTIFY_REDIRECT_URI=http://localhost:8080/api/v1/auth/callback
       - GEMINI_API_KEY=${GEMINI_API_KEY}
     networks:
       - moodshift-network
-    labels:
-      - "dokploy.enable=true"
-      - "dokploy.healthcheck.path=/health"
-      - "dokploy.port=8080"
-      - "dokploy.public=true"
-      - "dokploy.domain=api.moodshift.fuadfakhruz.id"
 
   frontend:
     build:
       context: ./frontend-vite
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-simple
     container_name: moodshift-frontend
     restart: unless-stopped
     ports:
       - "8989:80"
-      - "4433:443"
-    volumes:
-      # Mount SSL certificates from host
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-      # Mount log files for easier debugging
-      - ./logs/nginx:/var/log/nginx
     networks:
       - moodshift-network
+    depends_on:
+      - backend
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:80/"]
       interval: 30s
       timeout: 3s
       retries: 3
       start_period: 5s
-    labels:
-      - "dokploy.enable=true"
-      - "dokploy.port=80,443"
-      - "dokploy.public=true"
-      - "dokploy.domain=moodshift.fuadfakhruz.id"
-      - "dokploy.protocol=https"
 
 networks:
   moodshift-network:
