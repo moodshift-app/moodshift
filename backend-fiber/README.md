@@ -1,95 +1,96 @@
-# MoodShift Backend (Go Fiber)
+# MoodShift Backend API
 
-Ini adalah aplikasi backend MoodShift yang dibangun dengan Go Fiber.
+This is the Go Fiber backend for the MoodShift application that generates personalized Spotify playlists based on emotional analysis of user text.
 
----
+## Features
 
-## Fitur Utama
+- **Spotify OAuth Integration**: Securely authenticate users with their Spotify accounts
+- **Emotional Text Analysis**: Analyze user's text/curhatan using Google Vertex AI Gemini
+- **Playlist Generation**: Create customized playlists based on emotional analysis
+- **History Tracking**: Keep track of user's playlist generation history
+- **RESTful API**: Clean and well-documented API endpoints
 
-- **Autentikasi Spotify**
-  - OAuth flow, token handling, refresh, session JWT
-- **Analisis Teks**
-  - Endpoint analisis curhatan (Vertex AI Gemini)
-  - Mapping emosi ke parameter audio Spotify
-- **Manajemen Playlist**
-  - Endpoint generate playlist
-  - Pencarian lagu & pembuatan playlist ke akun Spotify user
-  - Endpoint riwayat playlist
-- **Error Handling**
-  - Format response error konsisten
-  - Middleware error, validasi, dan handling API error/limit/expired
-
----
-
-## Struktur Direktori
+## Project Structure
 
 ```
 backend-fiber/
-├── cmd/                   # Entry point aplikasi
+├── cmd/                   # Application entry point
 │   └── main.go
-├── config/                # Loader env & config
+├── config/                # Environment & configuration loader
 ├── internal/
 │   ├── models/            # Data models
-│   ├── services/          # Spotify, Gemini, Auth
-│   ├── routes/            # Handler per endpoint
-│   ├── middleware/        # Auth, logger, error, cors
-│   └── utils/             # Validator, error response
-├── Dockerfile
+│   ├── services/          # Service interfaces and implementations
+│   ├── routes/            # API endpoint handlers
+│   ├── middleware/        # Auth, logger, error handling
+│   └── utils/             # Validators, error responses
+├── Dockerfile             # Container configuration
+├── .env.example           # Template for environment variables
 ├── go.mod
 └── go.sum
 ```
 
----
+## API Endpoints
 
-## Integrasi Eksternal
+### Authentication
 
-- **Spotify API:** Otentikasi, pencarian lagu, pembuatan playlist (zmb3/spotify atau REST)
-- **Vertex AI Gemini:** Analisis emosi & tema (REST client Go)
+- `GET /api/v1/auth/spotify` - Initiate Spotify OAuth flow
+- `GET /api/v1/auth/callback` - Spotify OAuth callback handler
+- `GET /api/v1/auth/me` - Get current user information
 
----
+### Playlists
 
-## Endpoints
+- `POST /api/v1/playlists` - Generate a new playlist from text analysis
+- `GET /api/v1/playlists` - Get all playlists for the current user
+- `GET /api/v1/playlists/:id` - Get a specific playlist by ID
 
-| Endpoint               | Method | Deskripsi             |
-| ---------------------- | ------ | --------------------- |
-| /auth/login            | POST   | Mulai OAuth Spotify   |
-| /auth/callback         | GET    | Callback OAuth        |
-| /auth/refresh          | GET    | Refresh token Spotify |
-| /api/analyze           | POST   | Analisis curhatan     |
-| /api/playlist/generate | POST   | Generate playlist     |
-| /api/playlist/history  | GET    | Riwayat playlist user |
-| /health                | GET    | Cek status API        |
+## Getting Started
 
----
+### Prerequisites
 
-## Teknologi
+- Go 1.19+
+- Spotify Developer API credentials
+- Google Cloud Vertex AI API key (for Gemini)
 
-- **Go Fiber** (web framework)
-- **JWT** (session user)
-- **Spotify Go SDK / REST**
-- **REST client** (Vertex AI)
-- **godotenv** (env loader)
-- **go-playground/validator** (validasi input)
-- **zap/logrus** (logging)
-- **Docker** (container)
+### Environment Setup
 
----
+1. Copy the example environment file:
 
-## Best Practices
+   ```
+   cp .env.example .env
+   ```
 
-- Semua secrets & config dalam `.env`
-- Validasi input & error handling konsisten
-- Gunakan middleware Fiber untuk keamanan dan logging
-- Unit testing pada services & routes
-- Gunakan Docker untuk deploy production
+2. Update the `.env` file with your Spotify API credentials and Gemini API key
 
----
+### Running Locally
 
-## Deploy & Testing
+```bash
+# Install dependencies
+go mod download
 
-- Build binary: `go build -o moodshift`
-- Jalankan dengan Docker/Docker Compose
-- Tes endpoint dengan Postman/Insomnia
-- Monitoring & logging aktif pada production
+# Run the server
+go run cmd/main.go
+```
 
----
+### Docker Deployment
+
+```bash
+# Build the Docker image
+docker build -t moodshift-backend .
+
+# Run the container
+docker run -p 8080:8080 --env-file .env moodshift-backend
+```
+
+## Next Steps for Implementation
+
+- Implement service implementations for:
+  - Spotify authentication
+  - Gemini emotion analysis
+  - Playlist generation
+- Add database integration for persistent storage
+- Implement error logging and monitoring
+- Add unit and integration tests
+
+## License
+
+This project is licensed under the MIT License.

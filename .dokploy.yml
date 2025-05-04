@@ -1,0 +1,58 @@
+# Dokploy Configuration File
+version: "1"
+
+# Project configuration
+project:
+  name: "moodshift"
+  description: "Mood analysis and playlist generation application"
+
+# Deployment configuration
+deployment:
+  compose_file: "docker-compose.yml"
+  registry: "${DOKPLOY_REGISTRY_URL}"
+
+# Services configuration
+services:
+  backend:
+    name: "moodshift-backend"
+    type: "api"
+    port: 8080
+    health_check:
+      path: "/health"
+      interval: "30s"
+      timeout: "5s"
+      retries: 3
+    env:
+      - PORT
+      - APP_ENV
+      - CORS_ALLOW_ORIGINS
+      - SPOTIFY_CLIENT_ID
+      - SPOTIFY_CLIENT_SECRET
+      - SPOTIFY_REDIRECT_URI
+      - GEMINI_API_KEY
+    domains:
+      - "api.moodshift.fuadfakhruz.id"
+
+  frontend:
+    name: "moodshift-frontend"
+    type: "web"
+    port: 80
+    health_check:
+      test: ["CMD", "wget", "-qO-", "http://localhost:80/"]
+      interval: "30s"
+      timeout: "3s"
+      retries: 3
+    domains:
+      - "moodshift.fuadfakhruz.id"
+
+# Environment variables
+environment:
+  required:
+    - DOKPLOY_REGISTRY_URL
+    - SPOTIFY_CLIENT_ID
+    - SPOTIFY_CLIENT_SECRET
+    - GEMINI_API_KEY
+  optional:
+    - APP_ENV
+    - DOKPLOY_IMAGE_TAG
+    - PORT
